@@ -1,27 +1,257 @@
-# Исходная строка
-str_1 = 'AaBbCcDd'
+python
+def selection_sort(arr):
+    n = len(arr)
+    for i in range(n):
+        min_idx = i
+        for j in range(i + 1, n):
+            if arr[j] < arr[min_idx]:
+                min_idx = j
+        arr[i], arr[min_idx] = arr[min_idx], arr[i]
 
-# Получаем строку с заглавными буквами (с шагом 2, начиная с 0 индекса)
-uppercase_str = str_1[::2]
-# Получаем строку со строчными буквами (с шагом 2, начиная с 1 индекса)
-lowercase_str = str_1[1::2]
+def bubble_sort(arr):
+    n = len(arr)
+    for i in range(n - 1):
+        for j in range(n - i - 1):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
 
-# Выводим результаты
-print("Заглавные буквы:", uppercase_str)
-print("Строчные буквы:", lowercase_str)
+def insertion_sort(arr):
+    for i in range(1, len(arr)):
+        key = arr[i]
+        j = i - 1
+        while j >= 0 and arr[j] > key:
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = key
 
-# Исходный список
-li = ['a', '1', 'b', '2', 'c', '3']
+def merge_sort(arr):
+    if len(arr) > 1:
+        mid = len(arr) // 2
+        left = arr[:mid]
+        right = arr[mid:]
+        
+        merge_sort(left)
+        merge_sort(right)
+        
+        i = j = k = 0
+        while i < len(left) and j < len(right):
+            if left[i] <= right[j]:
+                arr[k] = left[i]
+                i += 1
+            else:
+                arr[k] = right[j]
+                j += 1
+            k += 1
+            
+        while i < len(left):
+            arr[k] = left[i]
+            i += 1
+            k += 1
+            
+        while j < len(right):
+            arr[k] = right[j]
+            j += 1
+            k += 1
+def shell_sort(arr):
+    n = len(arr)
+    gap = n // 2
+    
+    while gap > 0:
+        for i in range(gap, n):
+            temp = arr[i]
+            j = i
+            while j >= gap and arr[j - gap] > temp:
+                arr[j] = arr[j - gap]
+                j -= gap
+            arr[j] = temp
+        gap //= 2
 
-# Получаем списки с буквами (четные индексы) и числами (нечетные индексы)
-li_1 = li[0::2]  # буквы
-li_2 = li[1::2]  # числа
+def quick_sort(arr, low=0, high=None):
+    if high is None:
+        high = len(arr) - 1
+        
+    if low < high:
+        pi = partition(arr, low, high)
+        quick_sort(arr, low, pi - 1)
+        quick_sort(arr, pi + 1, high)
 
-# Удаляем исходный список
-del li
+def partition(arr, low, high):
+    pivot = arr[high]
+    i = low - 1
+    
+    for j in range(low, high):
+        if arr[j] <= pivot:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+            
+    arr[i + 1], arr[high] = arr[high], arr[i + 1]
+    return i + 1
 
-# Выводим полученные списки
-print(li_1)
-print()
-print(li_2)
+def heap_sort(arr):
+    def heapify(arr, n, i):
+        largest = i
+        left = 2 * i + 1
+        right = 2 * i + 2
+        
+        if left < n and arr[left] > arr[largest]:
+            largest = left
+            
+        if right < n and arr[right] > arr[largest]:
+            largest = right
+            
+        if largest != i:
+            arr[i], arr[largest] = arr[largest], arr[i]
+            heapify(arr, n, largest)
+    
+    n = len(arr)
+    
+    for i in range(n // 2 - 1, -1, -1):
+        heapify(arr, n, i)
+        
+    for i in range(n - 1, 0, -1):
+        arr[i], arr[0] = arr[0], arr[i]
+        heapify(arr, i, 0)
 
+if name == "main":
+    original = [64, 34, 25, 12, 22, 11, 90, 5, 77, 30]
+    
+    print("PYTHON АЛГОРИТМЫ СОРТИРОВКИ")
+    print(f"Исходный массив: {original}")
+    print()
+    
+    algorithms = [
+        ("Сортировка выбором", selection_sort),
+        ("Сортировка пузырьком", bubble_sort),
+        ("Сортировка вставками", insertion_sort),
+        ("Сортировка слиянием", merge_sort),
+        ("Сортировка Шелла", shell_sort),
+        ("Быстрая сортировка", quick_sort),
+        ("Пирамидальная сортировка", heap_sort),
+    ]
+    
+    for name, algorithm in algorithms:
+        arr = original.copy()
+        algorithm(arr)
+        print(f"{name}: {arr}")
+
+
+Вывод Python программы:
+
+PYTHON АЛГОРИТМЫ СОРТИРОВКИ
+Исходный массив: [64, 34, 25, 12, 22, 11, 90, 5, 77, 30]
+
+Сортировка выбором: [5, 11, 12, 22, 25, 30, 34, 64, 77, 90]
+Сортировка пузырьком: [5, 11, 12, 22, 25, 30, 34, 64, 77, 90]
+Сортировка вставками: [5, 11, 12, 22, 25, 30, 34, 64, 77, 90]
+Сортировка слиянием: [5, 11, 12, 22, 25, 30, 34, 64, 77, 90]
+Сортировка Шелла: [5, 11, 12, 22, 25, 30, 34, 64, 77, 90]
+Быстрая сортировка: [5, 11, 12, 22, 25, 30, 34, 64, 77, 90]
+Пирамидальная сортировка: [5, 11, 12, 22, 25, 30, 34, 64, 77, 90]
+
+shell
+
+
+python/search_algorithms.py
+
+python
+def linear_search(arr, target):
+    for i in range(len(arr)):
+        if arr[i] == target:
+            return i
+    return -1
+
+def binary_search(arr, target):
+    left, right = 0, len(arr) - 1
+    
+    while left <= right:
+        mid = (left + right) // 2
+        
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+            
+    return -1
+
+def interpolation_search(arr, target):
+    low, high = 0, len(arr) - 1
+    
+    while low <= high and target >= arr[low] and target <= arr[high]:
+        if low == high:
+            if arr[low] == target:
+                return low
+            return -1
+        
+        pos = low + ((high - low) // (arr[high] - arr[low])) * (target - arr[low])
+        
+        if arr[pos] == target:
+            return pos
+        elif arr[pos] < target:
+            low = pos + 1
+        else:
+            high = pos - 1
+            
+    return -1
+
+def fibonacci_search(arr, target):
+    def generate_fibonacci(n):
+        fib = [0, 1]
+        while fib[-1] < n:
+fib.append(fib[-1] + fib[-2])
+        return fib
+    
+    n = len(arr)
+    fib = generate_fibonacci(n)
+    
+    offset = -1
+    m = len(fib) - 1
+    
+    while fib[m] > 1:
+        i = min(offset + fib[m - 2], n - 1)
+        
+        if arr[i] < target:
+            m -= 1
+            offset = i
+        elif arr[i] > target:
+            m -= 2
+        else:
+            return i
+    
+    if fib[m - 1] and offset + 1 < n and arr[offset + 1] == target:
+        return offset + 1
+        
+    return -1
+
+if name == "main":
+    sorted_arr = [5, 11, 12, 22, 25, 30, 34, 64, 77, 90]
+    target = 25
+    
+    print("PYTHON АЛГОРИТМЫ ПОИСКА")
+    print(f"Отсортированный массив: {sorted_arr}")
+    print(f"Искомый элемент: {target}")
+    print()
+    
+    algorithms = [
+        ("Последовательный поиск", linear_search),
+        ("Бинарный поиск", binary_search),
+        ("Интерполирующий поиск", interpolation_search),
+        ("Поиск Фибоначчи", fibonacci_search),
+    ]
+    
+    for name, algorithm in algorithms:
+        result = algorithm(sorted_arr, target)
+        print(f"{name}: индекс {result}")
+
+
+Вывод Python программы:
+
+PYTHON АЛГОРИТМЫ ПОИСКА
+Отсортированный массив: [5, 11, 12, 22, 25, 30, 34, 64, 77, 90]
+Искомый элемент: 25
+
+Последовательный поиск: индекс 4
+Бинарный поиск: индекс 4
+Интерполирующий поиск: индекс 4
+Поиск Фибоначчи: индекс 4
