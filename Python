@@ -1,254 +1,348 @@
-python
-def selection_sort(arr):
-    n = len(arr)
-    for i in range(n):
-        min_idx = i
-        for j in range(i + 1, n):
-            if arr[j] < arr[min_idx]:
-                min_idx = j
-        arr[i], arr[min_idx] = arr[min_idx], arr[i]
+cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
 
-def bubble_sort(arr):
-    n = len(arr)
-    for i in range(n - 1):
-        for j in range(n - i - 1):
-            if arr[j] > arr[j + 1]:
-                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+void selectionSort(vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 0; i < n - 1; i++) {
+        int minIndex = i;
+        for (int j = i + 1; j < n; j++) {
+            if (arr[j] < arr[minIndex]) {
+                minIndex = j;
+            }
+        }
+        swap(arr[i], arr[minIndex]);
+    }
+}
 
-def insertion_sort(arr):
-    for i in range(1, len(arr)):
-        key = arr[i]
-        j = i - 1
-        while j >= 0 and arr[j] > key:
-            arr[j + 1] = arr[j]
-            j -= 1
-        arr[j + 1] = key
+void bubbleSort(vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                swap(arr[j], arr[j + 1]);
+            }
+        }
+    }
+}
 
-def merge_sort(arr):
-    if len(arr) > 1:
-        mid = len(arr) // 2
-        left = arr[:mid]
-        right = arr[mid:]
+void insertionSort(vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 1; i < n; i++) {
+        int key = arr[i];
+        int j = i - 1;
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+}
+
+void merge(vector<int>& arr, int left, int mid, int right) {
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+    
+    vector<int> L(n1), R(n2);
+    
+    for (int i = 0; i < n1; i++)
+        L[i] = arr[left + i];
+    for (int j = 0; j < n2; j++)
+        R[j] = arr[mid + 1 + j];
         
-        merge_sort(left)
-        merge_sort(right)
+    int i = 0, j = 0, k = left;
+    
+    while (i < n1 && j < n2) {
+        if (L[i] <= R[j]) {
+            arr[k] = L[i];
+            i++;
+        } else {
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+    
+    while (i < n1) {
+        arr[k] = L[i];
+        i++;
+        k++;
+    }
+    
+    while (j < n2) {
+        arr[k] = R[j];
+        j++;
+        k++;
+    }
+}
+
+void mergeSort(vector<int>& arr, int left, int right) {
+    if (left < right) {
+        int mid = left + (right - left) / 2;
+        mergeSort(arr, left, mid);
+        mergeSort(arr, mid + 1, right);
+        merge(arr, left, mid, right);
+    }
+}
+
+void shellSort(vector<int>& arr) {
+    int n = arr.size();
+    for (int gap = n / 2; gap > 0; gap /= 2) {
+        for (int i = gap; i < n; i++) {
+            int temp = arr[i];
+            int j;
+            for (j = i; j >= gap && arr[j - gap] > temp; j -= gap) {
+                arr[j] = arr[j - gap];
+            }
+            arr[j] = temp;
+        }
+    }
+}
+
+int partition(vector<int>& arr, int low, int high) {
+    int pivot = arr[high];
+    int i = low - 1;
+    
+    for (int j = low; j <= high - 1; j++) {
+        if (arr[j] <= pivot) {
+            i++;
+            swap(arr[i], arr[j]);
+        }
+    }
+    swap(arr[i + 1], arr[high]);
+    return i + 1;
+}
+void quickSort(vector<int>& arr, int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+
+void heapify(vector<int>& arr, int n, int i) {
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+    
+    if (left < n && arr[left] > arr[largest])
+        largest = left;
         
-        i = j = k = 0
-        while i < len(left) and j < len(right):
-            if left[i] <= right[j]:
-                arr[k] = left[i]
-                i += 1
-            else:
-                arr[k] = right[j]
-                j += 1
-            k += 1
-            
-        while i < len(left):
-            arr[k] = left[i]
-            i += 1
-            k += 1
-            
-        while j < len(right):
-            arr[k] = right[j]
-            j += 1
-            k += 1
-def shell_sort(arr):
-    n = len(arr)
-    gap = n // 2
-    
-    while gap > 0:
-        for i in range(gap, n):
-            temp = arr[i]
-            j = i
-            while j >= gap and arr[j - gap] > temp:
-                arr[j] = arr[j - gap]
-                j -= gap
-            arr[j] = temp
-        gap //= 2
-
-def quick_sort(arr, low=0, high=None):
-    if high is None:
-        high = len(arr) - 1
+    if (right < n && arr[right] > arr[largest])
+        largest = right;
         
-    if low < high:
-        pi = partition(arr, low, high)
-        quick_sort(arr, low, pi - 1)
-        quick_sort(arr, pi + 1, high)
+    if (largest != i) {
+        swap(arr[i], arr[largest]);
+        heapify(arr, n, largest);
+    }
+}
 
-def partition(arr, low, high):
-    pivot = arr[high]
-    i = low - 1
+void heapSort(vector<int>& arr) {
+    int n = arr.size();
     
-    for j in range(low, high):
-        if arr[j] <= pivot:
-            i += 1
-            arr[i], arr[j] = arr[j], arr[i]
-            
-    arr[i + 1], arr[high] = arr[high], arr[i + 1]
-    return i + 1
-
-def heap_sort(arr):
-    def heapify(arr, n, i):
-        largest = i
-        left = 2 * i + 1
-        right = 2 * i + 2
+    for (int i = n / 2 - 1; i >= 0; i--)
+        heapify(arr, n, i);
         
-        if left < n and arr[left] > arr[largest]:
-            largest = left
-            
-        if right < n and arr[right] > arr[largest]:
-            largest = right
-            
-        if largest != i:
-            arr[i], arr[largest] = arr[largest], arr[i]
-            heapify(arr, n, largest)
+    for (int i = n - 1; i > 0; i--) {
+        swap(arr[0], arr[i]);
+        heapify(arr, i, 0);
+    }
+}
+
+void printArray(const vector<int>& arr) {
+    for (int num : arr) {
+        cout << num << " ";
+    }
+    cout << endl;
+}
+
+int main() {
+    vector<int> original = {64, 34, 25, 12, 22, 11, 90, 5, 77, 30};
     
-    n = len(arr)
+    cout << "C++ АЛГОРИТМЫ СОРТИРОВКИ" << endl;
+    cout << "Исходный массив: ";
+    printArray(original);
+    cout << endl;
     
-    for i in range(n // 2 - 1, -1, -1):
-        heapify(arr, n, i)
+    vector<int> arr;
+    
+    arr = original;
+    selectionSort(arr);
+    cout << "Сортировка выбором: ";
+    printArray(arr);
+    
+    arr = original;
+    bubbleSort(arr);
+    cout << "Сортировка пузырьком: ";
+    printArray(arr);
+    
+    arr = original;
+    insertionSort(arr);
+    cout << "Сортировка вставками: ";
+    printArray(arr);
+    
+    arr = original;
+    mergeSort(arr, 0, arr.size() - 1);
+    cout << "Сортировка слиянием: ";
+    printArray(arr);
+    
+    arr = original;
+    shellSort(arr);
+    cout << "Сортировка Шелла: ";
+    printArray(arr);
+    
+    arr = original;
+    quickSort(arr, 0, arr.size() - 1);
+    cout << "Быстрая сортировка: ";
+    printArray(arr);
+    
+    arr = original;
+    heapSort(arr);
+    cout << "Пирамидальная сортировка: ";
+    printArray(arr);
+    
+    return 0;
+}
+
+
+Вывод C++ программы:
+
+C++ АЛГОРИТМЫ СОРТИРОВКИ
+Исходный массив: 64 34 25 12 22 11 90 5 77 30 
+
+Сортировка выбором: 5 11 12 22 25 30 34 64 77 90 
+Сортировка пузырьком: 5 11 12 22 25 30 34 64 77 90 
+Сортировка вставками: 5 11 12 22 25 30 34 64 77 90 
+Сортировка слиянием: 5 11 12 22 25 30 34 64 77 90 
+Сортировка Шелла: 5 11 12 22 25 30 34 64 77 90 
+Быстрая сортировка: 5 11 12 22 25 30 34 64 77 90 
+Пирамидальная сортировка: 5 11 12 22 25 30 34 64 77 90 
+
+
+cpp/search_algorithms.cpp
+
+cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int linearSearch(const vector<int>& arr, int target) {
+    for (int i = 0; i < arr.size(); i++) {
+        if (arr[i] == target) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int binarySearch(const vector<int>& arr, int target) {
+    int left = 0;
+    int right = arr.size() - 1;
+    
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
         
-    for i in range(n - 1, 0, -1):
-        arr[i], arr[0] = arr[0], arr[i]
-        heapify(arr, i, 0)
+        if (arr[mid] == target) {
+            return mid;
+        } else if (arr[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    return -1;
+}
 
-if name == "main":
-    original = [64, 34, 25, 12, 22, 11, 90, 5, 77, 30]
+int interpolationSearch(const vector<int>& arr, int target) {
+    int low = 0;
+    int high = arr.size() - 1;
     
-    print("PYTHON АЛГОРИТМЫ СОРТИРОВКИ")
-    print(f"Исходный массив: {original}")
-    print()
-    
-    algorithms = [
-        ("Сортировка выбором", selection_sort),
-        ("Сортировка пузырьком", bubble_sort),
-        ("Сортировка вставками", insertion_sort),
-        ("Сортировка слиянием", merge_sort),
-        ("Сортировка Шелла", shell_sort),
-        ("Быстрая сортировка", quick_sort),
-        ("Пирамидальная сортировка", heap_sort),
-    ]
-    
-    for name, algorithm in algorithms:
-        arr = original.copy()
-        algorithm(arr)
-        print(f"{name}: {arr}")
-
-
-Вывод Python программы:
-
-PYTHON АЛГОРИТМЫ СОРТИРОВКИ
-Исходный массив: [64, 34, 25, 12, 22, 11, 90, 5, 77, 30]
-
-Сортировка выбором: [5, 11, 12, 22, 25, 30, 34, 64, 77, 90]
-Сортировка пузырьком: [5, 11, 12, 22, 25, 30, 34, 64, 77, 90]
-Сортировка вставками: [5, 11, 12, 22, 25, 30, 34, 64, 77, 90]
-Сортировка слиянием: [5, 11, 12, 22, 25, 30, 34, 64, 77, 90]
-Сортировка Шелла: [5, 11, 12, 22, 25, 30, 34, 64, 77, 90]
-Быстрая сортировка: [5, 11, 12, 22, 25, 30, 34, 64, 77, 90]
-Пирамидальная сортировка: [5, 11, 12, 22, 25, 30, 34, 64, 77, 90]
-
-shell
-
-
-python/search_algorithms.py
-
-python
-def linear_search(arr, target):
-    for i in range(len(arr)):
-        if arr[i] == target:
-            return i
-    return -1
-
-def binary_search(arr, target):
-    left, right = 0, len(arr) - 1
-    
-    while left <= right:
-        mid = (left + right) // 2
+    while (low <= high && target >= arr[low] && target <= arr[high]) {
+        if (low == high) {
+            if (arr[low] == target) return low;
+            return -1;
+        }
         
-        if arr[mid] == target:
-            return mid
-        elif arr[mid] < target:
-            left = mid + 1
-        else:
-            right = mid - 1
-            
-    return -1
-
-def interpolation_search(arr, target):
-    low, high = 0, len(arr) - 1
+        int pos = low + (((double)(high - low) / 
+                         (arr[high] - arr[low])) * (target - arr[low]));
+                         
+        if (arr[pos] == target) {
+            return pos;
+        } else if (arr[pos] < target) {
+            low = pos + 1;
+        } else {
+            high = pos - 1;
+        }
+    }
+    return -1;
+}
+int fibonacciSearch(const vector<int>& arr, int target) {
+    int fib2 = 0;
+    int fib1 = 1;
+    int fib = fib2 + fib1;
+    int n = arr.size();
     
-    while low <= high and target >= arr[low] and target <= arr[high]:
-        if low == high:
-            if arr[low] == target:
-                return low
-            return -1
+    while (fib < n) {
+        fib2 = fib1;
+        fib1 = fib;
+        fib = fib2 + fib1;
+    }
+    
+    int offset = -1;
+    
+    while (fib > 1) {
+        int i = min(offset + fib2, n - 1);
         
-        pos = low + ((high - low) // (arr[high] - arr[low])) * (target - arr[low])
-        
-        if arr[pos] == target:
-            return pos
-        elif arr[pos] < target:
-            low = pos + 1
-        else:
-            high = pos - 1
-            
-    return -1
+        if (arr[i] < target) {
+            fib = fib1;
+            fib1 = fib2;
+            fib2 = fib - fib1;
+            offset = i;
+        } else if (arr[i] > target) {
+            fib = fib2;
+            fib1 = fib1 - fib2;
+            fib2 = fib - fib1;
+        } else {
+            return i;
+        }
+    }
+    
+    if (fib1 && offset + 1 < n && arr[offset + 1] == target) {
+        return offset + 1;
+    }
+    
+    return -1;
+}
 
-def fibonacci_search(arr, target):
-    def generate_fibonacci(n):
-        fib = [0, 1]
-        while fib[-1] < n:
-fib.append(fib[-1] + fib[-2])
-        return fib
+int main() {
+    vector<int> sortedArray = {5, 11, 12, 22, 25, 30, 34, 64, 77, 90};
+    int target = 25;
     
-    n = len(arr)
-    fib = generate_fibonacci(n)
+    cout << "C++ АЛГОРИТМЫ ПОИСКА" << endl;
+    cout << "Отсортированный массив: ";
+    for (int num : sortedArray) {
+        cout << num << " ";
+    }
+    cout << endl;
+    cout << "Искомый элемент: " << target << endl;
+    cout << endl;
     
-    offset = -1
-    m = len(fib) - 1
+    cout << "Последовательный поиск: индекс " << linearSearch(sortedArray, target) << endl;
+    cout << "Бинарный поиск: индекс " << binarySearch(sortedArray, target) << endl;
+    cout << "Интерполирующий поиск: индекс " << interpolationSearch(sortedArray, target) << endl;
+    cout << "Поиск Фибоначчи: индекс " << fibonacciSearch(sortedArray, target) << endl;
     
-    while fib[m] > 1:
-        i = min(offset + fib[m - 2], n - 1)
-        
-        if arr[i] < target:
-            m -= 1
-            offset = i
-        elif arr[i] > target:
-            m -= 2
-        else:
-            return i
-    
-    if fib[m - 1] and offset + 1 < n and arr[offset + 1] == target:
-        return offset + 1
-        
-    return -1
-
-if name == "main":
-    sorted_arr = [5, 11, 12, 22, 25, 30, 34, 64, 77, 90]
-    target = 25
-    
-    print("PYTHON АЛГОРИТМЫ ПОИСКА")
-    print(f"Отсортированный массив: {sorted_arr}")
-    print(f"Искомый элемент: {target}")
-    print()
-    
-    algorithms = [
-        ("Последовательный поиск", linear_search),
-        ("Бинарный поиск", binary_search),
-        ("Интерполирующий поиск", interpolation_search),
-        ("Поиск Фибоначчи", fibonacci_search),
-    ]
-    
-    for name, algorithm in algorithms:
-        result = algorithm(sorted_arr, target)
-        print(f"{name}: индекс {result}")
+    return 0;
+}
 
 
-Вывод Python программы:
+Вывод C++ программы:
 
-PYTHON АЛГОРИТМЫ ПОИСКА
-Отсортированный массив: [5, 11, 12, 22, 25, 30, 34, 64, 77, 90]
+C++ АЛГОРИТМЫ ПОИСКА
+Отсортированный массив: 5 11 12 22 25 30 34 64 77 90 
 Искомый элемент: 25
 
 Последовательный поиск: индекс 4
